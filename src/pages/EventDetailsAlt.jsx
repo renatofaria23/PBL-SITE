@@ -72,7 +72,7 @@ export default function EventDetailsAlt() {
         </h1>
 
         <p className="opacity-80 mb-10 text-center">
-          {event.cidade} · {event.local}
+          {event.cidade}
         </p>
 
         {/* GRID */}
@@ -83,14 +83,30 @@ export default function EventDetailsAlt() {
             <p className="leading-relaxed opacity-90">{event.descricao}</p>
           </div>
 
+          {/* LOCATION CARD */}
+          <div className="bg-white/10 backdrop-blur-xl rounded-3xl p-6 shadow-xl h-fit">
+            <h3 className="text-xl font-bold mb-4">Localização</h3>
+            <p className="text-sm mb-4 flex items-center gap-2">
+              <span className="truncate">{event.local}</span>
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-white opacity-90" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M12 2C8.134 2 5 5.134 5 9c0 4.418 7 13 7 13s7-8.582 7-13c0-3.866-3.134-7-7-7zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z" />
+              </svg>
+            </p>
+            <a
+              href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${event.local} ${event.cidade}`)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full inline-block text-center bg-white text-dark py-2 rounded-full font-semibold hover:scale-105 transition"
+            >
+              Abrir no Google Maps
+            </a>
+          </div>
+
           {/* INFO CARD */}
           <div className="bg-white/20 backdrop-blur-xl rounded-3xl p-6 shadow-xl h-fit">
             <h3 className="text-xl font-bold mb-4">Informações</h3>
 
             <div className="space-y-3 text-sm">
-              <p>
-                <strong>📍 Local:</strong> {event.local}
-              </p>
               <p>
                 <strong>🏙️ Cidade:</strong> {event.cidade}
               </p>
