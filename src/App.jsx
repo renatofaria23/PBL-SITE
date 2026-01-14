@@ -22,12 +22,15 @@ import SuporteDesativadaAlt from "./pages/SuporteDesativadaAlt";
 import SuporteApagarAlt from "./pages/SuporteApagarAlt";
 import SuporteContactoAlt from "./pages/SuporteContactoAlt";
 
+import RecoverPassword from "./pages/RecoverPassword";
+
 function App() {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
+      <Route path="/recover-password" element={<RecoverPassword />} />
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/events" element={<Events />} />
       <Route path="/eventsalt" element={<EventsAlt />} />

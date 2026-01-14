@@ -9,6 +9,7 @@ export default function Login() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -24,11 +25,10 @@ export default function Login() {
       console.error("Firebase login error:", err);
 
       switch (err.code) {
-        case "auth/user-not-found":
-          setError("Não existe conta com este email.");
-          break;
+        case "auth/invalid-credential":
         case "auth/wrong-password":
-          setError("Password incorreta.");
+        case "auth/user-not-found":
+          setError("Email ou password incorretos.");
           break;
         case "auth/invalid-email":
           setError("Email inválido.");
@@ -43,7 +43,6 @@ export default function Login() {
 
   return (
     <div className="min-h-screen bg-vibe-gradient relative flex items-center justify-center text-white px-6">
-      
       {/* NAVBAR */}
       <AuthNavbar />
 
@@ -57,11 +56,12 @@ export default function Login() {
         </h1>
 
         {error && (
-          <p className="bg-red-500/20 text-red-100 p-3 rounded mb-4 text-sm">
+          <p className="bg-red-500/20 text-red-100 p-3 rounded mb-4 text-sm text-center">
             {error}
           </p>
         )}
 
+        {/* EMAIL */}
         <div className="mb-4">
           <label className="block text-sm mb-1">Email</label>
           <input
@@ -73,15 +73,38 @@ export default function Login() {
           />
         </div>
 
-        <div className="mb-6">
+        {/* PASSWORD */}
+        <div className="mb-2 relative">
           <label className="block text-sm mb-1">Password</label>
+
           <input
-            type="password"
+            type={showPassword ? "text" : "password"}
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-4 py-3 rounded-xl bg-white/90 text-dark focus:outline-none"
+            className="w-full px-4 py-3 pr-12 rounded-xl bg-white/90 text-dark focus:outline-none"
           />
+
+          {/* OLHO */}
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-4 top-9 text-dark opacity-60 hover:opacity-100 transition"
+            title={showPassword ? "Ocultar password" : "Mostrar password"}
+          >
+            {showPassword ? "🙈" : "👁️"}
+          </button>
+        </div>
+
+        {/* RECUPERAR PASSWORD */}
+        <div className="text-right mb-6">
+          <button
+            type="button"
+            onClick={() => navigate("/recover-password")}
+            className="text-sm underline opacity-80 hover:opacity-100 transition"
+          >
+            Esqueceste-te da password?
+          </button>
         </div>
 
         <button
