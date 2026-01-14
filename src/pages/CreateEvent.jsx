@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import TopBar from "../components/TopBar";
+import TopBarAlt from "../components/TopBarAlt";
 import { db } from "../firebase/firebase";
 import { collection, addDoc, serverTimestamp, getDocs } from "firebase/firestore";
 
@@ -137,7 +137,7 @@ export default function CreateEvent() {
 
   return (
     <div className="min-h-screen bg-vibe-gradient text-white relative">
-      <TopBar />
+      <TopBarAlt />
 
       <div className="pt-28 px-8 pb-16 max-w-3xl mx-auto">
         <h1 className="text-4xl font-extrabold mb-6">Criar Evento</h1>
@@ -152,7 +152,7 @@ export default function CreateEvent() {
               placeholder="https://... (link da imagem)"
               value={fotoUrlInput}
               onChange={(e) => setFotoUrlInput(e.target.value)}
-              className="w-full p-3 rounded-xl bg-white/10 mb-3"
+              className="w-full p-3 rounded-xl bg-white/10 mb-3 text-white placeholder-white"
             />
 
             {fotoUrlInput && (
@@ -173,7 +173,7 @@ export default function CreateEvent() {
               <input
                 value={nome}
                 onChange={(e) => setNome(e.target.value)}
-                className="w-full p-3 rounded-xl bg-white/10"
+                className="w-full p-3 rounded-xl bg-white/10 text-white placeholder-white"
                 placeholder="Nome do evento"
                 required
               />
@@ -230,7 +230,7 @@ export default function CreateEvent() {
                 min="0"
                 value={capacidade}
                 onChange={(e) => setCapacidade(e.target.value)}
-                className="w-full p-3 rounded-xl bg-white/10"
+                className="w-full p-3 rounded-xl bg-white/10 text-white placeholder-white"
                 placeholder="Ex: 100"
               />
             </div>
@@ -240,7 +240,7 @@ export default function CreateEvent() {
               <input
                 value={cidade}
                 onChange={(e) => setCidade(e.target.value)}
-                className="w-full p-3 rounded-xl bg-white/10"
+                className="w-full p-3 rounded-xl bg-white/10 text-white placeholder-white"
                 placeholder="Ex: Lisboa"
                 required
               />
@@ -251,7 +251,7 @@ export default function CreateEvent() {
               <input
                 value={local}
                 onChange={(e) => setLocal(e.target.value)}
-                className="w-full p-3 rounded-xl bg-white/10"
+                className="w-full p-3 rounded-xl bg-white/10 text-white placeholder-white"
                 placeholder="Nome do local"
                 required
               />
@@ -262,7 +262,7 @@ export default function CreateEvent() {
               <input
                 value={endereco}
                 onChange={(e) => setEndereco(e.target.value)}
-                className="w-full p-3 rounded-xl bg-white/10"
+                className="w-full p-3 rounded-xl bg-white/10 text-white placeholder-white"
                 placeholder="Rua, nº"
                 required
               />
@@ -273,31 +273,13 @@ export default function CreateEvent() {
               <input
                 value={codigoPostal}
                 onChange={(e) => setCodigoPostal(e.target.value)}
-                className="w-full p-3 rounded-xl bg-white/10"
+                className="w-full p-3 rounded-xl bg-white/10 text-white placeholder-white"
                 placeholder="Ex: 1000-001"
                 required
               />
             </div>
 
-            <div className="md:col-span-2">
-              <label className="block mb-2 font-semibold">Oradores (opcional)</label>
-              <div className="bg-white/5 p-3 rounded-xl max-h-48 overflow-y-auto">
-                {oradoresList.length === 0 ? (
-                  <div className="opacity-80">A carregar oradores...</div>
-                ) : (
-                  oradoresList.map((o) => (
-                    <label key={o} className="flex items-center gap-2 py-1">
-                      <input
-                        type="checkbox"
-                        checked={selectedOradores.includes(o)}
-                        onChange={() => toggleOrador(o)}
-                      />
-                      <span className="ml-2">{o}</span>
-                    </label>
-                  ))
-                )}
-              </div>
-            </div>
+            
 
             <div className="md:col-span-2">
               <label className="block mb-2 font-semibold">Descrição</label>
@@ -305,7 +287,7 @@ export default function CreateEvent() {
                 value={descricao}
                 onChange={(e) => setDescricao(e.target.value)}
                 rows={5}
-                className="w-full p-3 rounded-xl bg-white/10"
+                className="w-full p-3 rounded-xl bg-white/10 text-white placeholder-white"
                 placeholder="Descrição do evento"
                 required
               />
@@ -319,7 +301,7 @@ export default function CreateEvent() {
                 step="0.01"
                 value={preco}
                 onChange={(e) => setPreco(e.target.value)}
-                className="w-full p-3 rounded-xl bg-white/10"
+                className="w-full p-3 rounded-xl bg-white/10 text-white placeholder-white"
                 placeholder="0.00"
               />
             </div>
