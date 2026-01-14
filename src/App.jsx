@@ -6,6 +6,7 @@ import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
 import Events from "./pages/Events";
 import EventsAlt from "./pages/EventsAlt";
+import CreateEvent from "./pages/CreateEvent";
 import Suporte from "./pages/Suporte";
 import SuportePassword from "./pages/SuportePassword";
 import SuporteConta from "./pages/SuporteConta";
@@ -36,6 +37,7 @@ function App() {
       <Route path="/events" element={<Events />} />
       <Route path="/events/:id" element={<EventDetails />} />
       <Route path="/eventsalt" element={<EventsAlt />} />
+      <Route path="/criar-evento" element={<CreateEvent />} />
       <Route path="/suporte" element={<Suporte />} />
       <Route path="/suportepassword" element={<SuportePassword />} />
       <Route path="/suporteconta" element={<SuporteConta />} />

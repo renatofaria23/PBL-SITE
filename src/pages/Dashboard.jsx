@@ -27,10 +27,17 @@ export default function Dashboard() {
 
       <div className="flex gap-4">
         <button
-          onClick={() => navigate("/eventsloggedin")}
+          onClick={() => navigate("/eventsalt")}
           className="bg-white text-dark px-6 py-3 rounded-full font-semibold"
         >
           Ver eventos
+        </button>
+
+        <button
+          onClick={() => navigate("/criar-evento")}
+          className="bg-white text-dark px-6 py-3 rounded-full font-semibold"
+        >
+          Criar Evento
         </button>
 
         <button
