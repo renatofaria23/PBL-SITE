@@ -1,12 +1,15 @@
 import { useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../firebase/firebase";
+import { doc, setDoc, serverTimestamp } from "firebase/firestore";
+import { auth, db } from "../firebase/firebase";
 import { useNavigate } from "react-router-dom";
 import AuthNavbar from "../components/AuthNavbar";
 
 export default function Signup() {
   const navigate = useNavigate();
 
+  const [primeiroNome, setPrimeiroNome] = useState("");
+  const [ultimoNome, setUltimoNome] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -18,11 +21,41 @@ export default function Signup() {
     setError("");
 
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
+      // 1️⃣ Criar conta no Auth
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+
+      const user = userCredential.user;
+
+      // 2️⃣ Guardar dados no Firestore
+      await setDoc(doc(db, "users", user.uid), {
+        primeiroNome,
+        ultimoNome,
+        email,
+        createdAt: serverTimestamp(),
+      });
+
+      // 3️⃣ Redirect
       navigate("/dashboard");
     } catch (err) {
       console.error("Firebase signup error:", err);
-      setError(err.message);
+
+      switch (err.code) {
+        case "auth/email-already-in-use":
+          setError("Este email já está registado.");
+          break;
+        case "auth/weak-password":
+          setError("A password deve ter pelo menos 6 caracteres.");
+          break;
+        case "auth/invalid-email":
+          setError("Email inválido.");
+          break;
+        default:
+          setError("Erro ao criar conta. Tenta novamente.");
+      }
     } finally {
       setLoading(false);
     }
@@ -30,7 +63,6 @@ export default function Signup() {
 
   return (
     <div className="min-h-screen bg-vibe-gradient relative flex items-center justify-center text-white px-6">
-      
       {/* NAVBAR */}
       <AuthNavbar />
 
@@ -49,6 +81,31 @@ export default function Signup() {
           </p>
         )}
 
+        {/* PRIMEIRO NOME */}
+        <div className="mb-4">
+          <label className="block text-sm mb-1">Primeiro nome</label>
+          <input
+            type="text"
+            required
+            value={primeiroNome}
+            onChange={(e) => setPrimeiroNome(e.target.value)}
+            className="w-full px-4 py-3 rounded-xl bg-white/90 text-dark focus:outline-none"
+          />
+        </div>
+
+        {/* ÚLTIMO NOME */}
+        <div className="mb-4">
+          <label className="block text-sm mb-1">Último nome</label>
+          <input
+            type="text"
+            required
+            value={ultimoNome}
+            onChange={(e) => setUltimoNome(e.target.value)}
+            className="w-full px-4 py-3 rounded-xl bg-white/90 text-dark focus:outline-none"
+          />
+        </div>
+
+        {/* EMAIL */}
         <div className="mb-4">
           <label className="block text-sm mb-1">Email</label>
           <input
@@ -60,6 +117,7 @@ export default function Signup() {
           />
         </div>
 
+        {/* PASSWORD */}
         <div className="mb-6">
           <label className="block text-sm mb-1">Password</label>
           <input
