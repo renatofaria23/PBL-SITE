@@ -22,7 +22,7 @@ export default function AppAlt() {
         
         <ol className="list-decimal list-inside space-y-4 mb-8 font-medium">
           <li className="pl-2 tracking-tight">Feche e volte a abrir a app</li>
-          <li className="pl-2 tracking-tight">
+          <li className="pl-2 tracking-tight">           
             Verifique se tem a versão mais recente na loja de aplicações
           </li>
           <li className="pl-2 tracking-tight">Reinicie o dispositivo</li>
