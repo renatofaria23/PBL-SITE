@@ -115,9 +115,15 @@ export default function EventDetailsAlt() {
               </p>
             </div>
 
-            <button onClick={() => navigate(`/compraralt/${id}`)} className="w-full mt-6 bg-white text-dark py-3 rounded-full font-semibold hover:scale-105 transition">
-              Comprar bilhete
-            </button>
+            <div className="flex gap-3 mt-6">
+              <button onClick={() => navigate(`/compraralt/${id}`)} className="flex-1 bg-white text-dark py-3 rounded-full font-semibold hover:scale-105 transition">
+                Comprar bilhete
+              </button>
+
+              <button onClick={() => navigate(`/editar-evento/${id}`)} className="flex-1 bg-transparent border border-white/30 py-3 rounded-full font-semibold hover:scale-105 transition">
+                Editar Evento
+              </button>
+            </div>
           </div>
         </div>
       </div>
