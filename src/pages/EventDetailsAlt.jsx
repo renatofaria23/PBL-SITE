@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase/firebase";
 import { useParams, useNavigate } from "react-router-dom";
-import TopBar from "../components/TopBar";
+import TopBarAlt from "../components/TopBarAlt";
 
-export default function EventDetails() {
+export default function EventDetailsAlt() {
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -49,10 +49,11 @@ export default function EventDetails() {
   return (
     <div className="min-h-screen bg-vibe-gradient text-white relative">
       {/* NAVBAR */}
-      <TopBar />
+      <TopBarAlt />
 
       {/* CONTENT */}
       <div className="pt-28 max-w-6xl mx-auto px-6 pb-20">
+        
 
         {/* IMAGE CONTAINER */}
         <div className="flex justify-center mb-10">

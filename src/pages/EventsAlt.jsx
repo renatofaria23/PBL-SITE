@@ -78,7 +78,7 @@ export default function EventsLoggedIn() {
                     </span>
 
                     <button
-                      onClick={() => navigate(`/events/${event.id}`)}
+                      onClick={() => navigate(`/eventsalt/${event.id}`)}
                       className="bg-white text-dark px-5 py-2 rounded-full font-semibold hover:scale-105 transition"
                     >
                       Ver evento

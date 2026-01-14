@@ -25,6 +25,7 @@ import SuporteContactoAlt from "./pages/SuporteContactoAlt";
 
 import RecoverPassword from "./pages/RecoverPassword";
 import EventDetails from "./pages/EventDetails";
+import EventDetailsAlt from "./pages/EventDetailsAlt";
 
 function App() {
   return (
@@ -37,6 +38,7 @@ function App() {
       <Route path="/events" element={<Events />} />
       <Route path="/events/:id" element={<EventDetails />} />
       <Route path="/eventsalt" element={<EventsAlt />} />
+      <Route path="/eventsalt/:id" element={<EventDetailsAlt />} />
       <Route path="/criar-evento" element={<CreateEvent />} />
       <Route path="/suporte" element={<Suporte />} />
       <Route path="/suportepassword" element={<SuportePassword />} />
