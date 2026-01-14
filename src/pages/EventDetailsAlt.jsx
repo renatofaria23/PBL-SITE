@@ -99,7 +99,7 @@ export default function EventDetailsAlt() {
               </p>
             </div>
 
-            <button className="w-full mt-6 bg-white text-dark py-3 rounded-full font-semibold hover:scale-105 transition">
+            <button onClick={() => navigate(`/compraralt/${id}`)} className="w-full mt-6 bg-white text-dark py-3 rounded-full font-semibold hover:scale-105 transition">
               Comprar bilhete
             </button>
           </div>
