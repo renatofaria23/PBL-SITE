@@ -2,51 +2,103 @@ import { auth } from "../firebase/firebase";
 import { signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import TopBarAlt from "../components/TopBarAlt";
+import DashboardCard from "../components/DashboardCard";
 
 export default function Dashboard() {
   const navigate = useNavigate();
+  const user = auth.currentUser;
 
   const handleLogout = async () => {
     await signOut(auth);
     navigate("/");
   };
 
-  return (
-    <div className="min-h-screen bg-vibe-gradient relative flex items-center justify-center text-white px-6">
+  const mockEvents = [
+    { id: 1, title: "Noite Eletrônica", date: "20 Jan", place: "Clube Vibe" },
+    { id: 2, title: "Roda de Jazz", date: "25 Jan", place: "Bar Azul" },
+    { id: 3, title: "Festival Indie", date: "05 Fev", place: "Parque Central" },
+  ];
 
-      {/* NAVBAR */}
+  return (
+    <div className="min-h-screen bg-vibe-gradient relative text-white px-6">
       <TopBarAlt />
 
-      <h1 className="text-4xl font-extrabold mb-4">
-        Dashboard
-      </h1>
+      <main className="max-w-7xl mx-auto py-12">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-8">
+          <div>
+            <h1 className="text-4xl md:text-5xl font-extrabold">Dashboard</h1>
+            <p className="text-white/80 mt-2">Bem-vindo à VibeMaker 🚀 — sua central de eventos</p>
+          </div>
 
-      <p className="opacity-80 mb-8">
-        Bem-vindo à VibeMaker 🚀
-      </p>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => navigate("/criar-evento")}
+              className="bg-white text-dark px-5 py-2 rounded-full font-semibold shadow"
+            >
+              + Criar Evento
+            </button>
 
-      <div className="flex gap-4">
-        <button
-          onClick={() => navigate("/eventsalt")}
-          className="bg-white text-dark px-6 py-3 rounded-full font-semibold"
-        >
-          Ver eventos
-        </button>
+            <button
+              onClick={() => navigate("/eventsalt")}
+              className="bg-white/10 hover:bg-white/15 px-5 py-2 rounded-full border border-white/10"
+            >
+              Ver Eventos
+            </button>
 
-        <button
-          onClick={() => navigate("/criar-evento")}
-          className="bg-white text-dark px-6 py-3 rounded-full font-semibold"
-        >
-          Criar Evento
-        </button>
+            <button
+              onClick={handleLogout}
+              className="border border-white/20 px-4 py-2 rounded-full ml-2"
+            >
+              Logout
+            </button>
+          </div>
+        </div>
 
-        <button
-          onClick={handleLogout}
-          className="border border-white/40 px-6 py-3 rounded-full"
-        >
-          Logout
-        </button>
-      </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* PERFIL */}
+          <DashboardCard className="flex flex-col justify-between">
+            <div className="flex items-center gap-4">
+              <div className="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center text-2xl font-bold">{user?.email?.[0]?.toUpperCase() || "U"}</div>
+              <div>
+                <div className="font-semibold text-lg">{user?.email || "Usuário"}</div>
+                <div className="text-sm text-white/70">Membro VibeMaker</div>
+              </div>
+            </div>
+
+            
+          </DashboardCard>
+
+          {/* ESTATÍSTICAS */}
+          <div className="lg:col-span-1">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <DashboardCard title="Eventos" value="12" />
+              <DashboardCard title="Próximos" value="3" />
+              <DashboardCard title="Favoritos" value="5" />
+            </div>
+
+            <div className="mt-4">
+              <DashboardCard title="Resumo rápido">
+                <div className="mt-3 text-sm text-white/80">Acompanhe seus eventos criados e participe de novas experiências.</div>
+              </DashboardCard>
+            </div>
+          </div>
+
+          {/* EVENTOS RECENTES */}
+          <DashboardCard title="Eventos Recentes" footer={<div className="text-right"><button onClick={() => navigate('/eventsalt')} className="text-sm text-white/70 underline">Ver todos</button></div>}>
+            <div className="mt-2 space-y-3">
+              {mockEvents.map((e) => (
+                <div key={e.id} className="flex items-center justify-between bg-white/3 rounded-lg p-3 hover:bg-white/4 transition">
+                  <div>
+                    <div className="font-semibold">{e.title}</div>
+                    <div className="text-sm text-white/70">{e.place}</div>
+                  </div>
+                  <div className="text-sm text-white/80">{e.date}</div>
+                </div>
+              ))}
+            </div>
+          </DashboardCard>
+        </div>
+      </main>
     </div>
   );
 }
