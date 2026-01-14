@@ -1,12 +1,32 @@
-import { auth } from "../firebase/firebase";
+import { auth, db } from "../firebase/firebase";
 import { signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { doc, getDoc } from "firebase/firestore";
 import TopBarAlt from "../components/TopBarAlt";
 import DashboardCard from "../components/DashboardCard";
 
 export default function Dashboard() {
   const navigate = useNavigate();
   const user = auth.currentUser;
+
+  const [userProfile, setUserProfile] = useState(null);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      if (!user) return;
+      try {
+        const docRef = doc(db, "users", user.uid);
+        const snap = await getDoc(docRef);
+        if (snap.exists()) {
+          setUserProfile(snap.data());
+        }
+      } catch (err) {
+        console.error("Erro ao buscar perfil:", err);
+      }
+    };
+    fetchProfile();
+  }, [user]);
 
   const handleLogout = async () => {
     await signOut(auth);
@@ -56,16 +76,26 @@ export default function Dashboard() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* PERFIL */}
-          <DashboardCard className="flex flex-col justify-between">
-            <div className="flex items-center gap-4">
-              <div className="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center text-2xl font-bold">{user?.email?.[0]?.toUpperCase() || "U"}</div>
-              <div>
-                <div className="font-semibold text-lg">{user?.email || "Usuário"}</div>
-                <div className="text-sm text-white/70">Membro VibeMaker</div>
+          <DashboardCard className="self-start pl-0">
+            <div className="w-full flex items-center justify-between gap-4">
+              <div className="flex items-center gap-4">
+                {userProfile?.fotoUrl ? (
+                  <img src={userProfile.fotoUrl} alt="profile" className="w-16 h-16 rounded-full object-cover" />
+                ) : (
+                  <div className="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center text-2xl font-bold">{(userProfile?.primeiroNome ? userProfile.primeiroNome[0] : user?.email?.[0])?.toUpperCase() || "U"}</div>
+                )}
+
+                <div>
+                  <div className="font-semibold text-lg">{userProfile ? `${userProfile.primeiroNome} ${userProfile.ultimoNome}` : user?.email || "Usuário"}</div>
+                  <div className="text-sm text-white/70">{user?.email}</div>
+                  <div className="text-sm text-white/70">Membro VibeMaker</div>
+                </div>
+              </div>
+
+              <div className="ml-4">
+                <button onClick={() => navigate('/editar-perfil')} className="bg-white text-dark px-3 py-2 rounded-full font-semibold text-sm hover:scale-105 transition">Editar Perfil</button>
               </div>
             </div>
-
-            
           </DashboardCard>
 
           {/* ESTATÍSTICAS */}
@@ -78,7 +108,7 @@ export default function Dashboard() {
 
             <div className="mt-4">
               <DashboardCard title="Resumo rápido">
-                <div className="mt-3 text-sm text-white/80">Acompanhe seus eventos criados e participe de novas experiências.</div>
+                <div className="mt-3 text-sm text-white/80">Acompanhe seus eventos criados e participe em novas experiências.</div>
               </DashboardCard>
             </div>
           </div>

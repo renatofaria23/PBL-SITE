@@ -8,6 +8,7 @@ import Events from "./pages/Events";
 import EventsAlt from "./pages/EventsAlt";
 import CreateEvent from "./pages/CreateEvent";
 import EditEvent from "./pages/EditEvent";
+import EditProfile from "./pages/EditProfile";
 import Suporte from "./pages/Suporte";
 import SuportePassword from "./pages/SuportePassword";
 import SuporteConta from "./pages/SuporteConta";
@@ -46,6 +47,7 @@ function App() {
       <Route path="/compraralt/:id" element={<ComprarAlt />} />
       <Route path="/criar-evento" element={<CreateEvent />} />
       <Route path="/editar-evento/:id" element={<EditEvent />} />
+      <Route path="/editar-perfil" element={<EditProfile />} />
       <Route path="/suporte" element={<Suporte />} />
       <Route path="/suportepassword" element={<SuportePassword />} />
       <Route path="/suporteconta" element={<SuporteConta />} />
