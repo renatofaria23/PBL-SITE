@@ -12,6 +12,7 @@ export default function Dashboard() {
 
   const [userProfile, setUserProfile] = useState(null);
   const [myEvents, setMyEvents] = useState([]);
+  const [favCount, setFavCount] = useState(0);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -55,8 +56,20 @@ export default function Dashboard() {
       }
     };
 
+    const fetchFavorites = async () => {
+      if (!user) return;
+      try {
+        const q = query(collection(db, "favorites"), where("userId", "==", user.uid));
+        const snap = await getDocs(q);
+        setFavCount(snap.size);
+      } catch (err) {
+        console.error("Erro ao buscar favoritos:", err);
+      }
+    };
+
     fetchProfile();
     fetchMyEvents();
+    fetchFavorites();
   }, [user]);
 
   const handleLogout = async () => {
@@ -84,7 +97,7 @@ export default function Dashboard() {
   const formatDate = (val) => {
     if (!val) return "";
     const date = val.toDate ? val.toDate() : new Date(val);
-    return date.toLocaleDateString("pt-PT", { day: "2-digit", month: "short" });
+    return date.toLocaleDateString("pt-PT", { day: "2-digit", month: "short", year: "numeric" });
   };
 
   return (
@@ -153,7 +166,7 @@ export default function Dashboard() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <DashboardCard title="Eventos" value={totalEvents} />
               <DashboardCard title="Próximos" value={upcomingCount} />
-              <DashboardCard title="Favoritos" value={0} />
+              <DashboardCard title="Favoritos" value={favCount} />
             </div>
 
             

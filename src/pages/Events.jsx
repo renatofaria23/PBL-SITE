@@ -49,7 +49,7 @@ export default function Events() {
             {events.map((event) => (
               <div
                 key={event.id}
-                className="bg-white/20 backdrop-blur-xl rounded-3xl overflow-hidden shadow-xl hover:scale-[1.03] transition"
+                className="bg-white/20 backdrop-blur-xl rounded-3xl overflow-hidden shadow-xl hover:scale-[1.03] transition flex flex-col"
               >
                 {/* IMAGE */}
                 <img
@@ -59,7 +59,7 @@ export default function Events() {
                 />
 
                 {/* BODY */}
-                <div className="p-6">
+                <div className="p-6 flex flex-col flex-1">
                   <h2 className="text-2xl font-bold mb-2">
                     {event.nome}
                   </h2>
@@ -72,7 +72,7 @@ export default function Events() {
                     {event.descricao}
                   </p>
 
-                  <div className="flex justify-between items-center mt-6">
+                  <div className="flex justify-between items-center mt-auto">
                     <span className="text-lg font-semibold">
                       {event.preco} €
                     </span>
