@@ -1,19 +1,27 @@
 import { useEffect, useState } from "react";
 import { doc, getDoc, collection, query, where, getDocs, addDoc, deleteDoc } from "firebase/firestore";
 import { db, auth } from "../firebase/firebase";
+import { onAuthStateChanged } from "firebase/auth";
 import { useParams, useNavigate } from "react-router-dom";
 import TopBarAlt from "../components/TopBarAlt";
 
 export default function EventDetailsAlt() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const user = auth.currentUser;
+  const [user, setUser] = useState(null);
 
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
   const [userProfile, setUserProfile] = useState(null);
   const [hasTicket, setHasTicket] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    });
+    return () => unsubscribe();
+  }, []);
 
   useEffect(() => {
     const fetchEvent = async () => {
@@ -207,14 +215,20 @@ export default function EventDetailsAlt() {
               </div>
 
               <div className="mt-6">
-                {!hasTicket ? (
-                  <button onClick={() => navigate(`/compraralt/${id}`)} className="w-full bg-white text-dark py-3 rounded-full font-semibold hover:scale-105 transition">
-                    Comprar bilhete
-                  </button>
+                {user ? (
+                  !hasTicket ? (
+                    <button onClick={() => navigate(`/compraralt/${id}`)} className="w-full bg-white text-dark py-3 rounded-full font-semibold hover:scale-105 transition">
+                      Comprar bilhete
+                    </button>
+                  ) : (
+                    <div className="w-full bg-green-500/20 text-green-100 py-3 rounded-full font-semibold text-center border border-green-500/50 cursor-default">
+                      Bilhete Adquirido ✅
+                    </div>
+                  )
                 ) : (
-                  <div className="w-full bg-green-500/20 text-green-100 py-3 rounded-full font-semibold text-center border border-green-500/50 cursor-default">
-                    Bilhete Adquirido ✅
-                  </div>
+                  <button onClick={() => navigate("/login")} className="w-full bg-gray-500 text-white py-3 rounded-full font-semibold hover:scale-105 transition">
+                    Login Necessário
+                  </button>
                 )}
               </div>
             </div>
