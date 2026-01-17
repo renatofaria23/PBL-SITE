@@ -30,6 +30,10 @@ import EventDetails from "./pages/EventDetails";
 import EventDetailsAlt from "./pages/EventDetailsAlt";
 import Comprar from "./pages/Comprar";
 import ComprarAlt from "./pages/ComprarAlt";
+import MeusBilhetes from "./pages/MeusBilhetes";
+import ProximosBilhetes from "./pages/ProximosBilhetes";
+import Favoritos from "./pages/Favoritos";
+
 
 function App() {
   return (
@@ -63,6 +67,9 @@ function App() {
       <Route path="/suportedesativadaalt" element={<SuporteDesativadaAlt />} />
       <Route path="/suporteapagaralt" element={<SuporteApagarAlt />} />
       <Route path="/suportecontactoalt" element={<SuporteContactoAlt />} />
+      <Route path="/meus-bilhetes" element={<MeusBilhetes />} />
+      <Route path="/proximos-bilhetes" element={<ProximosBilhetes />} />
+      <Route path="/favoritos" element={<Favoritos />} />
     </Routes>
   );
 }

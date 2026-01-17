@@ -163,9 +163,15 @@ export default function Dashboard() {
           {/* ESTATÍSTICAS */}
           <div className="lg:col-span-1">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <DashboardCard title="Eventos" value={totalEvents} />
-              <DashboardCard title="Próximos" value={upcomingCount} />
-              <DashboardCard title="Favoritos" value={favCount} />
+              <button onClick={() => navigate("/meus-bilhetes")} className="w-full text-left hover:scale-105 transition">
+                <DashboardCard title="Eventos" value={totalEvents} />
+              </button>
+              <button onClick={() => navigate("/proximos-bilhetes")} className="w-full text-left hover:scale-105 transition">
+                <DashboardCard title="Próximos" value={upcomingCount} />
+              </button>
+              <button onClick={() => navigate("/favoritos")} className="w-full text-left hover:scale-105 transition">
+                <DashboardCard title="Favoritos" value={favCount} />
+              </button>
             </div>
 
             
