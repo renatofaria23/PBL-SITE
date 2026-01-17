@@ -63,7 +63,7 @@ export default function EventDetailsAlt() {
     const checkTicket = async () => {
       if (!user || !id) return;
       try {
-        const q = query(collection(db, "tickets"), where("userId", "==", user.uid), where("eventId", "==", id));
+        const q = query(collection(db, "users", user.uid, "bilhetes"), where("eventId", "==", id));
         const snap = await getDocs(q);
         if (!snap.empty) {
           setHasTicket(true);
@@ -80,7 +80,7 @@ export default function EventDetailsAlt() {
     const checkFavorite = async () => {
       if (!user || !id) return;
       try {
-        const q = query(collection(db, "favorites"), where("userId", "==", user.uid), where("eventId", "==", id));
+        const q = query(collection(db, "users", user.uid, "favoritos"), where("eventId", "==", id));
         const snap = await getDocs(q);
         setIsFavorite(!snap.empty);
       } catch (err) {
@@ -95,15 +95,15 @@ export default function EventDetailsAlt() {
     try {
       if (isFavorite) {
         // Remover dos favoritos
-        const q = query(collection(db, "favorites"), where("userId", "==", user.uid), where("eventId", "==", id));
+        const q = query(collection(db, "users", user.uid, "favoritos"), where("eventId", "==", id));
         const snap = await getDocs(q);
         for (const d of snap.docs) {
-          await deleteDoc(doc(db, "favorites", d.id));
+          await deleteDoc(doc(db, "users", user.uid, "favoritos", d.id));
         }
         setIsFavorite(false);
       } else {
         // Adicionar aos favoritos
-        await addDoc(collection(db, "favorites"), { userId: user.uid, eventId: id });
+        await addDoc(collection(db, "users", user.uid, "favoritos"), { userId: user.uid, eventId: id });
         setIsFavorite(true);
       }
     } catch (err) {

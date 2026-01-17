@@ -38,7 +38,7 @@ export default function ComprarAlt() {
     setProcessing(true);
 
     try {
-      await addDoc(collection(db, "tickets"), {
+      await addDoc(collection(db, "users", user.uid, "bilhetes"), {
         userId: user.uid,
         eventId: id,
         eventName: event.nome, // Opcional: ajuda em listagens simples

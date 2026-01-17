@@ -45,7 +45,7 @@ export default function EventDetails() {
     const checkFavorite = async () => {
       if (!user || !id) return;
       try {
-        const q = query(collection(db, "favorites"), where("userId", "==", user.uid), where("eventId", "==", id));
+        const q = query(collection(db, "users", user.uid, "favoritos"), where("eventId", "==", id));
         const snap = await getDocs(q);
         setIsFavorite(!snap.empty);
       } catch (err) {
@@ -60,15 +60,15 @@ export default function EventDetails() {
     try {
       if (isFavorite) {
         // Remover
-        const q = query(collection(db, "favorites"), where("userId", "==", user.uid), where("eventId", "==", id));
+        const q = query(collection(db, "users", user.uid, "favoritos"), where("eventId", "==", id));
         const snap = await getDocs(q);
         for (const d of snap.docs) {
-          await deleteDoc(doc(db, "favorites", d.id));
+          await deleteDoc(doc(db, "users", user.uid, "favoritos", d.id));
         }
         setIsFavorite(false);
       } else {
         // Adicionar
-        await addDoc(collection(db, "favorites"), { userId: user.uid, eventId: id });
+        await addDoc(collection(db, "users", user.uid, "favoritos"), { userId: user.uid, eventId: id });
         setIsFavorite(true);
       }
     } catch (err) {

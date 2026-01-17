@@ -2,7 +2,7 @@ import { auth, db } from "../firebase/firebase";
 import { signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { doc, getDoc, collection, query, where, getDocs } from "firebase/firestore";
+import { doc, getDoc, collection, getDocs } from "firebase/firestore";
 import TopBarAlt from "../components/TopBarAlt";
 import DashboardCard from "../components/DashboardCard";
 
@@ -32,9 +32,8 @@ export default function Dashboard() {
       if (!user) return;
       try {
         // 1. Buscar bilhetes do utilizador
-        const ticketsRef = collection(db, "tickets");
-        const q = query(ticketsRef, where("userId", "==", user.uid));
-        const querySnapshot = await getDocs(q);
+        const ticketsRef = collection(db, "users", user.uid, "bilhetes");
+        const querySnapshot = await getDocs(ticketsRef);
         
         const eventIds = querySnapshot.docs.map(doc => doc.data().eventId);
         
@@ -59,8 +58,8 @@ export default function Dashboard() {
     const fetchFavorites = async () => {
       if (!user) return;
       try {
-        const q = query(collection(db, "favorites"), where("userId", "==", user.uid));
-        const snap = await getDocs(q);
+        const favoritesRef = collection(db, "users", user.uid, "favoritos");
+        const snap = await getDocs(favoritesRef);
         setFavCount(snap.size);
       } catch (err) {
         console.error("Erro ao buscar favoritos:", err);
