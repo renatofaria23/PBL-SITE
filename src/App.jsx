@@ -33,6 +33,7 @@ import ComprarAlt from "./pages/ComprarAlt";
 import MeusBilhetes from "./pages/MeusBilhetes";
 import ProximosBilhetes from "./pages/ProximosBilhetes";
 import Favoritos from "./pages/Favoritos";
+import Bilhete from "./pages/Bilhete";
 
 
 function App() {
@@ -48,6 +49,7 @@ function App() {
       <Route path="/eventsalt" element={<EventsAlt />} />
       <Route path="/eventsalt/:id" element={<EventDetailsAlt />} />
       <Route path="/comprar/:id" element={<Comprar />} />
+      <Route path="/bilhete/:id" element={<Bilhete />} />
       <Route path="/compraralt/:id" element={<ComprarAlt />} />
       <Route path="/criar-evento" element={<CreateEvent />} />
       <Route path="/editar-evento/:id" element={<EditEvent />} />

@@ -1,5 +1,5 @@
 import { auth, db } from "../firebase/firebase";
-import { signOut } from "firebase/auth";
+import { signOut, onAuthStateChanged } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { doc, getDoc, collection, getDocs } from "firebase/firestore";
@@ -8,11 +8,18 @@ import DashboardCard from "../components/DashboardCard";
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  const user = auth.currentUser;
+  const [user, setUser] = useState(null);
 
   const [userProfile, setUserProfile] = useState(null);
   const [myEvents, setMyEvents] = useState([]);
   const [favCount, setFavCount] = useState(0);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    });
+    return () => unsubscribe();
+  }, []);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -35,7 +42,7 @@ export default function Dashboard() {
         const ticketsRef = collection(db, "users", user.uid, "bilhetes");
         const querySnapshot = await getDocs(ticketsRef);
         
-        const eventIds = querySnapshot.docs.map(doc => doc.data().eventId);
+        const eventIds = [...new Set(querySnapshot.docs.map(doc => doc.data().eventId))];
         
         if (eventIds.length > 0) {
           // 2. Buscar detalhes dos eventos
@@ -180,12 +187,12 @@ export default function Dashboard() {
           {/* EVENTOS RECENTES (Baseado nos bilhetes) */}
           <DashboardCard footer={<div className="text-center text-white/70"><button onClick={() => navigate('/eventsalt')} className="text-sm text-white/70 underline">Ver todos</button></div>}>
             <div className="mt-2 space-y-3">
-              <h2 className="text-xl font-bold text-center mb-4 w-full">Os teus Eventos</h2>
+              <h2 className="text-xl font-bold text-center mb-4 w-full">Os teus Bilhetes</h2>
               {sortedEvents.length > 0 ? (
                 sortedEvents.slice(0, 3).map((e) => (
                   <button
                     key={e.id}
-                    onClick={() => navigate(`/eventsalt/${e.id}`)}
+                    onClick={() => navigate(`/bilhete/${e.id}`)}
                     className="w-full flex items-center gap-3 bg-white/3 rounded-lg p-3 hover:bg-white/10 transition text-left overflow-hidden"
                   >
                     <img 
