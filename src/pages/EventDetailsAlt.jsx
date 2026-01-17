@@ -1,15 +1,18 @@
 import { useEffect, useState } from "react";
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "../firebase/firebase";
+import { doc, getDoc, collection, query, where, getDocs } from "firebase/firestore";
+import { db, auth } from "../firebase/firebase";
 import { useParams, useNavigate } from "react-router-dom";
 import TopBarAlt from "../components/TopBarAlt";
 
 export default function EventDetailsAlt() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const user = auth.currentUser;
 
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [userProfile, setUserProfile] = useState(null);
+  const [hasTicket, setHasTicket] = useState(false);
 
   useEffect(() => {
     const fetchEvent = async () => {
@@ -29,6 +32,39 @@ export default function EventDetailsAlt() {
 
     fetchEvent();
   }, [id]);
+
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      if (!user) return;
+      try {
+        const docRef = doc(db, "users", user.uid);
+        const snap = await getDoc(docRef);
+        if (snap.exists()) {
+          setUserProfile(snap.data());
+        }
+      } catch (err) {
+        console.error("Erro ao buscar perfil do utilizador:", err);
+      }
+    };
+    fetchUserProfile();
+  }, [user]);
+
+  // Verificar se o utilizador já tem bilhete para este evento
+  useEffect(() => {
+    const checkTicket = async () => {
+      if (!user || !id) return;
+      try {
+        const q = query(collection(db, "tickets"), where("userId", "==", user.uid), where("eventId", "==", id));
+        const snap = await getDocs(q);
+        if (!snap.empty) {
+          setHasTicket(true);
+        }
+      } catch (err) {
+        console.error("Erro ao verificar bilhete:", err);
+      }
+    };
+    checkTicket();
+  }, [user, id]);
 
   if (loading) {
     return (
@@ -118,18 +154,26 @@ export default function EventDetailsAlt() {
               </div>
 
               <div className="mt-6">
-                <button onClick={() => navigate(`/compraralt/${id}`)} className="w-full bg-white text-dark py-3 rounded-full font-semibold hover:scale-105 transition">
-                  Comprar bilhete
-                </button>
+                {!hasTicket ? (
+                  <button onClick={() => navigate(`/compraralt/${id}`)} className="w-full bg-white text-dark py-3 rounded-full font-semibold hover:scale-105 transition">
+                    Comprar bilhete
+                  </button>
+                ) : (
+                  <div className="w-full bg-green-500/20 text-green-100 py-3 rounded-full font-semibold text-center border border-green-500/50 cursor-default">
+                    Bilhete Adquirido ✅
+                  </div>
+                )}
               </div>
             </div>
 
             {/* EDIT BUTTON OUTSIDE INFO CARD */}
-            <div>
-              <button onClick={() => navigate(`/editar-evento/${id}`)} className="w-full mt-4 bg-transparent border border-white/30 py-3 rounded-full font-semibold hover:scale-105 transition">
-                Editar Evento
-              </button>
-            </div>
+            {userProfile?.isAdmin && (
+              <div>
+                <button onClick={() => navigate(`/editar-evento/${id}`)} className="w-full mt-4 bg-transparent border border-white/30 py-3 rounded-full font-semibold hover:scale-105 transition">
+                  Editar Evento
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>

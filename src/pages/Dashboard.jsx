@@ -2,7 +2,7 @@ import { auth, db } from "../firebase/firebase";
 import { signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, collection, query, where, getDocs } from "firebase/firestore";
 import TopBarAlt from "../components/TopBarAlt";
 import DashboardCard from "../components/DashboardCard";
 
@@ -11,6 +11,7 @@ export default function Dashboard() {
   const user = auth.currentUser;
 
   const [userProfile, setUserProfile] = useState(null);
+  const [myEvents, setMyEvents] = useState([]);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -25,7 +26,37 @@ export default function Dashboard() {
         console.error("Erro ao buscar perfil:", err);
       }
     };
+
+    const fetchMyEvents = async () => {
+      if (!user) return;
+      try {
+        // 1. Buscar bilhetes do utilizador
+        const ticketsRef = collection(db, "tickets");
+        const q = query(ticketsRef, where("userId", "==", user.uid));
+        const querySnapshot = await getDocs(q);
+        
+        const eventIds = querySnapshot.docs.map(doc => doc.data().eventId);
+        
+        if (eventIds.length > 0) {
+          // 2. Buscar detalhes dos eventos
+          const eventsPromises = eventIds.map(eventId => getDoc(doc(db, "events", eventId)));
+          const eventsSnapshots = await Promise.all(eventsPromises);
+          
+          const eventsData = eventsSnapshots
+            .filter(snap => snap.exists())
+            .map(snap => ({ id: snap.id, ...snap.data() }));
+            
+          setMyEvents(eventsData);
+        } else {
+          setMyEvents([]);
+        }
+      } catch (err) {
+        console.error("Erro ao buscar eventos do utilizador:", err);
+      }
+    };
+
     fetchProfile();
+    fetchMyEvents();
   }, [user]);
 
   const handleLogout = async () => {
@@ -33,11 +64,28 @@ export default function Dashboard() {
     navigate("/");
   };
 
-  const mockEvents = [
-    { id: 1, title: "Noite Eletrônica", date: "20 Jan", place: "Clube Vibe" },
-    { id: 2, title: "Roda de Jazz", date: "25 Jan", place: "Bar Azul" },
-    { id: 3, title: "Festival Indie", date: "05 Fev", place: "Parque Central" },
-  ];
+  // Cálculos para as estatísticas
+  const totalEvents = myEvents.length;
+  
+  const now = new Date();
+  const upcomingEvents = myEvents.filter(e => {
+    const startDate = e.data_inicio?.toDate ? e.data_inicio.toDate() : new Date(e.data_inicio);
+    return startDate > now;
+  });
+  const upcomingCount = upcomingEvents.length;
+
+  // Ordenar eventos por data (mais próximos primeiro)
+  const sortedEvents = [...myEvents].sort((a, b) => {
+    const dateA = a.data_inicio?.toDate ? a.data_inicio.toDate() : new Date(a.data_inicio);
+    const dateB = b.data_inicio?.toDate ? b.data_inicio.toDate() : new Date(b.data_inicio);
+    return dateA - dateB;
+  });
+
+  const formatDate = (val) => {
+    if (!val) return "";
+    const date = val.toDate ? val.toDate() : new Date(val);
+    return date.toLocaleDateString("pt-PT", { day: "2-digit", month: "short" });
+  };
 
   return (
     <div className="min-h-screen bg-vibe-gradient relative text-white px-6">
@@ -51,12 +99,14 @@ export default function Dashboard() {
           </div>
 
           <div className="flex items-center gap-3">
-            <button
-              onClick={() => navigate("/criar-evento")}
-              className="bg-white text-dark px-5 py-2 rounded-full font-semibold shadow"
-            >
-              + Criar Evento
-            </button>
+            {userProfile?.isAdmin && (
+              <button
+                onClick={() => navigate("/criar-evento")}
+                className="bg-white text-dark px-5 py-2 rounded-full font-semibold shadow"
+              >
+                + Criar Evento
+              </button>
+            )}
 
             <button
               onClick={() => navigate("/eventsalt")}
@@ -76,7 +126,7 @@ export default function Dashboard() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* PERFIL */}
-          <DashboardCard className="self-start pl-0">
+          <DashboardCard className="self-start">
             <div className="w-full flex items-center justify-between gap-4">
               <div className="flex items-center gap-4">
                 {userProfile?.fotoUrl ? (
@@ -101,30 +151,40 @@ export default function Dashboard() {
           {/* ESTATÍSTICAS */}
           <div className="lg:col-span-1">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <DashboardCard title="Eventos" value="12" />
-              <DashboardCard title="Próximos" value="3" />
-              <DashboardCard title="Favoritos" value="5" />
+              <DashboardCard title="Eventos" value={totalEvents} />
+              <DashboardCard title="Próximos" value={upcomingCount} />
+              <DashboardCard title="Favoritos" value={0} />
             </div>
 
-            <div className="mt-4">
-              <DashboardCard title="Resumo rápido">
-                <div className="mt-3 text-sm text-white/80">Acompanhe seus eventos criados e participe em novas experiências.</div>
-              </DashboardCard>
-            </div>
+            
           </div>
 
-          {/* EVENTOS RECENTES */}
-          <DashboardCard title="Eventos Recentes" footer={<div className="text-right"><button onClick={() => navigate('/eventsalt')} className="text-sm text-white/70 underline">Ver todos</button></div>}>
+          {/* EVENTOS RECENTES (Baseado nos bilhetes) */}
+          <DashboardCard footer={<div className="text-center text-white/70"><button onClick={() => navigate('/eventsalt')} className="text-sm text-white/70 underline">Ver todos</button></div>}>
             <div className="mt-2 space-y-3">
-              {mockEvents.map((e) => (
-                <div key={e.id} className="flex items-center justify-between bg-white/3 rounded-lg p-3 hover:bg-white/4 transition">
-                  <div>
-                    <div className="font-semibold">{e.title}</div>
-                    <div className="text-sm text-white/70">{e.place}</div>
-                  </div>
-                  <div className="text-sm text-white/80">{e.date}</div>
-                </div>
-              ))}
+              <h2 className="text-xl font-bold text-center mb-4 w-full">Os teus Eventos</h2>
+              {sortedEvents.length > 0 ? (
+                sortedEvents.slice(0, 3).map((e) => (
+                  <button
+                    key={e.id}
+                    onClick={() => navigate(`/eventsalt/${e.id}`)}
+                    className="w-full flex items-center gap-3 bg-white/3 rounded-lg p-3 hover:bg-white/10 transition text-left overflow-hidden"
+                  >
+                    <img 
+                      src={e.foto_evento} 
+                      alt={e.nome} 
+                      className="w-12 h-12 rounded-md object-cover shrink-0"
+                    />
+                    <div className="flex-1 min-w-0">
+                      <div className="font-semibold truncate">{e.nome}</div>
+                      <div className="text-sm text-white/70 truncate">{e.local}</div>
+                    </div>
+                    <div className="text-sm text-white/80 whitespace-nowrap shrink-0">{formatDate(e.data_inicio)}</div>
+                  </button>
+                ))
+              ) : (
+                <div className="text-center text-white/60 py-4">Ainda não tens bilhetes comprados.</div>
+              )}
             </div>
           </DashboardCard>
         </div>

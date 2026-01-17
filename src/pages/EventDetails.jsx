@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { doc, getDoc } from "firebase/firestore";
-import { db } from "../firebase/firebase";
+import { db, auth } from "../firebase/firebase";
+import { onAuthStateChanged } from "firebase/auth";
 import { useParams, useNavigate } from "react-router-dom";
 import TopBar from "../components/TopBar";
 
@@ -10,6 +11,14 @@ export default function EventDetails() {
 
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    });
+    return () => unsubscribe();
+  }, []);
 
   useEffect(() => {
     const fetchEvent = async () => {
@@ -116,9 +125,15 @@ export default function EventDetails() {
                 </p>
               </div>
 
-              <button onClick={() => navigate(`/comprar/${id}`)} className="w-full mt-6 bg-white text-dark py-3 rounded-full font-semibold hover:scale-105 transition">
-                Comprar bilhete
-              </button>
+              {user ? (
+                <button onClick={() => navigate(`/comprar/${id}`)} className="w-full mt-6 bg-white text-dark py-3 rounded-full font-semibold hover:scale-105 transition">
+                  Comprar bilhete
+                </button>
+              ) : (
+                <button onClick={() => navigate("/login")} className="w-full mt-6 bg-gray-500 text-white py-3 rounded-full font-semibold hover:scale-105 transition">
+                  Login Necessário
+                </button>
+              )}
             </div>
           </div>
         </div>

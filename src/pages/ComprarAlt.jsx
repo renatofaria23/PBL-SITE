@@ -1,15 +1,17 @@
 import { useEffect, useState } from "react";
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "../firebase/firebase";
+import { doc, getDoc, addDoc, collection, serverTimestamp } from "firebase/firestore";
+import { db, auth } from "../firebase/firebase";
 import { useParams, useNavigate } from "react-router-dom";
 import TopBarAlt from "../components/TopBarAlt";
 
 export default function ComprarAlt() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const user = auth.currentUser;
 
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [processing, setProcessing] = useState(false);
   const [selected, setSelected] = useState("wallet");
 
   useEffect(() => {
@@ -30,6 +32,26 @@ export default function ComprarAlt() {
 
     fetchEvent();
   }, [id]);
+
+  const handleBuy = async () => {
+    if (!user || !event) return;
+    setProcessing(true);
+
+    try {
+      await addDoc(collection(db, "tickets"), {
+        userId: user.uid,
+        eventId: id,
+        eventName: event.nome, // Opcional: ajuda em listagens simples
+        purchasedAt: serverTimestamp(),
+        paymentMethod: selected,
+        price: event.preco
+      });
+      navigate("/dashboard");
+    } catch (err) {
+      console.error("Erro ao comprar bilhete:", err);
+      setProcessing(false);
+    }
+  };
 
   if (loading) return (
     <div className="min-h-screen bg-vibe-gradient flex items-center justify-center text-white">A carregar...</div>
@@ -92,8 +114,12 @@ export default function ComprarAlt() {
               <div className="text-3xl font-extrabold">{Number(event.preco).toFixed(2)}€</div>
             </div>
 
-            <button onClick={() => navigate(-1)} className="w-full mt-6 bg-gray-200 text-dark py-3 rounded-full font-semibold hover:scale-105 transition">
-              Continuar
+            <button 
+              onClick={handleBuy} 
+              disabled={processing}
+              className="w-full mt-6 bg-gray-200 text-dark py-3 rounded-full font-semibold hover:scale-105 transition disabled:opacity-50 disabled:hover:scale-100"
+            >
+              {processing ? "A processar..." : "Confirmar Compra"}
             </button>
           </div>
         </div>

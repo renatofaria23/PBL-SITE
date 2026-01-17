@@ -35,6 +35,7 @@ export default function Signup() {
         primeiroNome,
         ultimoNome,
         email,
+        isAdmin: false,
         createdAt: serverTimestamp(),
       });
 
