@@ -187,7 +187,7 @@ export default function Dashboard() {
           </div>
 
           {/* EVENTOS RECENTES (Baseado nos bilhetes) */}
-          <DashboardCard footer={<div className="text-center text-white/70"><button onClick={() => navigate('/eventsalt')} className="text-sm text-white/70 underline">Ver todos</button></div>}>
+          <DashboardCard footer={<div className="text-center text-white/70"><button onClick={() => navigate('/meus-bilhetes')} className="text-sm text-white/70 underline">Ver todos</button></div>}>
             <div className="mt-2 space-y-3">
               <h2 className="text-xl font-bold text-center mb-4 w-full">Os teus Bilhetes</h2>
               {sortedEvents.length > 0 ? (
