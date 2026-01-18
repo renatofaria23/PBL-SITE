@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { collection, getDocs, doc, getDoc } from "firebase/firestore";
+import { collection, onSnapshot, doc, getDoc } from "firebase/firestore";
 import { db, auth } from "../firebase/firebase";
 import TopBarAlt from "../components/TopBarAlt";
 import { useNavigate } from "react-router-dom";
@@ -20,20 +20,20 @@ export default function Favoritos() {
   }, []);
 
   useEffect(() => {
-    const fetchEvents = async () => {
-      if (!user) return;
+    if (!user) return;
+
+    const favRef = collection(db, "users", user.uid, "favoritos");
+
+    const unsubscribe = onSnapshot(favRef, async (snapshot) => {
       try {
-        const favRef = collection(db, "users", user.uid, "favoritos");
-        const querySnapshot = await getDocs(favRef);
-        
-        const eventIds = querySnapshot.docs.map(doc => doc.data().eventId);
+        const eventIds = snapshot.docs.map((doc) => doc.data().eventId);
 
         if (eventIds.length > 0) {
-          const eventsPromises = eventIds.map(eventId => getDoc(doc(db, "events", eventId)));
+          const eventsPromises = eventIds.map((eventId) => getDoc(doc(db, "events", eventId)));
           const eventsSnapshots = await Promise.all(eventsPromises);
           const eventsData = eventsSnapshots
-            .filter(snap => snap.exists())
-            .map(snap => ({ id: snap.id, ...snap.data() }));
+            .filter((snap) => snap.exists())
+            .map((snap) => ({ id: snap.id, ...snap.data() }));
           setEvents(eventsData);
         } else {
           setEvents([]);
@@ -43,9 +43,9 @@ export default function Favoritos() {
       } finally {
         setLoading(false);
       }
-    };
+    });
 
-    if (user) fetchEvents();
+    return () => unsubscribe();
   }, [user]);
 
   return (
