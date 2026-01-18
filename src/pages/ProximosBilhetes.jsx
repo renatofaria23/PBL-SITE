@@ -24,9 +24,9 @@ export default function ProximosBilhetes() {
       if (!user) return;
       try {
         const ticketsRef = collection(db, "users", user.uid, "bilhetes");
-        const querySnapshot = await getDocs(ticketsRef);
+        const snapshot = await getDocs(ticketsRef);
         
-        const eventIds = [...new Set(querySnapshot.docs.map(doc => doc.data().eventId))];
+        const eventIds = [...new Set(snapshot.docs.map(doc => doc.data().eventId).filter(Boolean))];
 
         if (eventIds.length > 0) {
           const eventsPromises = eventIds.map(eventId => getDoc(doc(db, "events", eventId)));
@@ -53,7 +53,7 @@ export default function ProximosBilhetes() {
       }
     };
 
-    if (user) fetchEvents();
+    fetchEvents();
   }, [user]);
 
   return (

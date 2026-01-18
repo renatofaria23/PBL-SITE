@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { collection, getDocs, doc, getDoc } from "firebase/firestore";
+import { collection, onSnapshot, doc, getDoc } from "firebase/firestore";
 import { db, auth } from "../firebase/firebase";
 import TopBarAlt from "../components/TopBarAlt";
 import { useNavigate } from "react-router-dom";
@@ -20,14 +20,14 @@ export default function MeusBilhetes() {
   }, []);
 
   useEffect(() => {
-    const fetchEvents = async () => {
-      if (!user) return;
+    if (!user) return;
+
+    const ticketsRef = collection(db, "users", user.uid, "bilhetes");
+
+    const unsubscribe = onSnapshot(ticketsRef, async (snapshot) => {
       try {
-        const ticketsRef = collection(db, "users", user.uid, "bilhetes");
-        const querySnapshot = await getDocs(ticketsRef);
-        
         // Usar Set para evitar duplicados se o user comprou múltiplos bilhetes para o mesmo evento
-        const eventIds = [...new Set(querySnapshot.docs.map(doc => doc.data().eventId))];
+        const eventIds = [...new Set(snapshot.docs.map(doc => doc.data().eventId ? String(doc.data().eventId) : null).filter(Boolean))];
 
         if (eventIds.length > 0) {
           const eventsPromises = eventIds.map(eventId => getDoc(doc(db, "events", eventId)));
@@ -44,9 +44,9 @@ export default function MeusBilhetes() {
       } finally {
         setLoading(false);
       }
-    };
+    });
 
-    if (user) fetchEvents();
+    return () => unsubscribe();
   }, [user]);
 
   return (

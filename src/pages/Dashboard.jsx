@@ -2,7 +2,7 @@ import { auth, db } from "../firebase/firebase";
 import { signOut, onAuthStateChanged } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { doc, getDoc, collection, getDocs } from "firebase/firestore";
+import { doc, getDoc, collection, getDocs, onSnapshot } from "firebase/firestore";
 import TopBarAlt from "../components/TopBarAlt";
 import DashboardCard from "../components/DashboardCard";
 
@@ -35,14 +35,15 @@ export default function Dashboard() {
       }
     };
 
-    const fetchMyEvents = async () => {
+    fetchProfile();
+
+    let unsubscribeTickets;
+
+    const setupMyEventsListener = () => {
       if (!user) return;
-      try {
-        // 1. Buscar bilhetes do utilizador
-        const ticketsRef = collection(db, "users", user.uid, "bilhetes");
-        const querySnapshot = await getDocs(ticketsRef);
-        
-        const eventIds = [...new Set(querySnapshot.docs.map(doc => doc.data().eventId))];
+      const ticketsRef = collection(db, "users", user.uid, "bilhetes");
+      unsubscribeTickets = onSnapshot(ticketsRef, async (snapshot) => {
+        const eventIds = [...new Set(snapshot.docs.map(doc => doc.data().eventId ? String(doc.data().eventId) : null).filter(Boolean))];
         
         if (eventIds.length > 0) {
           // 2. Buscar detalhes dos eventos
@@ -57,25 +58,26 @@ export default function Dashboard() {
         } else {
           setMyEvents([]);
         }
-      } catch (err) {
-        console.error("Erro ao buscar eventos do utilizador:", err);
-      }
+      });
     };
 
     const fetchFavorites = async () => {
       if (!user) return;
       try {
         const favoritesRef = collection(db, "users", user.uid, "favoritos");
-        const snap = await getDocs(favoritesRef);
-        setFavCount(snap.size);
+        const snapshot = await getDocs(favoritesRef);
+        setFavCount(snapshot.size);
       } catch (err) {
         console.error("Erro ao buscar favoritos:", err);
       }
     };
 
-    fetchProfile();
-    fetchMyEvents();
+    setupMyEventsListener();
     fetchFavorites();
+
+    return () => {
+      if (unsubscribeTickets) unsubscribeTickets();
+    };
   }, [user]);
 
   const handleLogout = async () => {
