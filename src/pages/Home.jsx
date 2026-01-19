@@ -45,23 +45,25 @@ export default function Home() {
             </p>
 
             <ul className="space-y-4 text-lg mb-10">
-              <li>🎟️ Compra bilhetes em segundos</li>
-              <li>❤️ Guarda eventos favoritos</li>
-              <li>🔔 Recebe notificações em tempo real</li>
-              <li>📱 Experiência pensada para mobile</li>
+              <li>- Compra bilhetes em segundos</li>
+              <li>- Guarda eventos favoritos</li>
+              <li>- Recebe notificações em tempo real</li>
+              <li>- Experiência pensada para mobile</li>
             </ul>
 
             <button className="bg-white/80 text-dark px-8 py-4 rounded-full font-semibold cursor-not-allowed">
-              App móvel em breve
+              Download
             </button>
           </div>
 
-          {/* MOCKUP */}
+          {/* MOCKUP DA APP (PUBLIC) */}
           <div className="flex justify-center">
-            <div className="w-64 h-[520px] rounded-3xl bg-white/20 backdrop-blur-xl shadow-2xl flex items-center justify-center">
-              <span className="opacity-70 text-center px-6">
-                Mockup da app móvel
-              </span>
+            <div className="w-64 h-[520px] rounded-3xl bg-white/20 backdrop-blur-xl shadow-2xl flex items-center justify-center overflow-hidden">
+              <img
+                src="/app.png"
+                alt="App móvel VibeMaker"
+                className="w-full h-full object-contain"
+              />
             </div>
           </div>
         </div>
