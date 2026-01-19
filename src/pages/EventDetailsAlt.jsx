@@ -221,9 +221,12 @@ export default function EventDetailsAlt() {
                       Comprar bilhete
                     </button>
                   ) : (
-                    <div className="w-full bg-green-500/20 text-green-100 py-3 rounded-full font-semibold text-center border border-green-500/50 cursor-default">
+                    <button 
+                      onClick={() => navigate(`/bilhete/${id}`)}
+                      className="w-full bg-green-500/20 text-green-100 py-3 rounded-full font-semibold text-center border border-green-500/50 hover:scale-105 transition"
+                    >
                       Bilhete Adquirido ✅
-                    </div>
+                    </button>
                   )
                 ) : (
                   <button onClick={() => navigate("/login")} className="w-full bg-gray-500 text-white py-3 rounded-full font-semibold hover:scale-105 transition">
