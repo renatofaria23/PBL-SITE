@@ -112,11 +112,11 @@ export default function Dashboard() {
     <div className="min-h-screen bg-vibe-gradient relative text-white px-6">
       <TopBarAlt />
 
-      <main className="max-w-7xl mx-auto py-12">
+      <main className="max-w-7xl mx-auto pt-28 pb-12">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-8">
           <div>
             <h1 className="text-4xl md:text-5xl font-extrabold">Dashboard</h1>
-            <p className="text-white/80 mt-2">Bem-vindo à VibeMaker 🚀 — sua central de eventos</p>
+            <p className="text-white/80 mt-2">Bem-vindo à VibeMaker 🚀 - sua central de eventos</p>
           </div>
 
           <div className="flex items-center gap-3">
@@ -171,7 +171,7 @@ export default function Dashboard() {
 
           {/* ESTATÍSTICAS */}
           <div className="lg:col-span-1">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-3 md:grid-cols-3 gap-4">
               <button onClick={() => navigate("/meus-bilhetes")} className="w-full text-left hover:scale-105 transition">
                 <DashboardCard title="Eventos" value={totalEvents} />
               </button>
