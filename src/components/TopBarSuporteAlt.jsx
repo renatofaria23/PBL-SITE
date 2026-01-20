@@ -10,7 +10,12 @@ export default function TopBar() {
       <div className="flex-1 flex justify-start">
         <MusicPlayer />
       </div>
-
+    <button
+            onClick={() => navigate("/dashboard")}
+            className="border border-white/40 px-3 py-1.5 rounded hover:bg-white/10 transition text-xs md:text-sm mr-2"
+          >
+            Dashboard
+          </button>
     </div>
   );
 }

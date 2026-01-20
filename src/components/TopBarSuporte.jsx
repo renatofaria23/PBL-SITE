@@ -13,6 +13,12 @@ export default function TopBar() {
 
       <div className="flex items-center gap-3 md:gap-6 mx-2">
         <button
+            onClick={() => navigate("/")}
+            className="border border-white/40 px-3 py-1.5 rounded hover:bg-white/10 transition text-xs md:text-sm mr-2"
+          >
+            Home
+          </button>
+        <button
           onClick={() => navigate("/login")}
           className="whitespace-nowrap text-sm font-medium opacity-90 hover:opacity-100 transition"
         >
@@ -25,8 +31,8 @@ export default function TopBar() {
         >
           Sign up
         </button>
+        
       </div>
-
     </div>
   );
 }
